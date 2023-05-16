@@ -9,13 +9,66 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "highlight-selection.helloWorld",
-      "title": "Hello World"
-    }]
+    "configuration": {
+      "type": "object",
+      "title": "highlight-selection configuration",
+      "properties": {
+        "highlight-selection.borderWidth": {
+          "type": "string",
+          "default": "1px",
+          "description": "Set Border Size"
+        },
+        "highlight-selection.borderRadius": {
+          "type": "string",
+          "default": "3px",
+          "description": "Set Border Radius"
+        },
+        "highlight-selection.borderColor": {
+          "type": "string",
+          "default": "",
+          "description": "Set Border Color"
+        },
+        "highlight-selection.backgroundColor": {
+          "type": "string",
+          "default": "",
+          "description": "Set backgroundColor"
+        },
+        "highlight-selection.alignment": {
+          "type": "string",
+          "enum": [
+              "left",
+              "right"
+          ],
+          "default": "left",
+          "description": "Specifies the alignment of the highlight selection in the status bar"
+        },
+        "highlight-selection.priority": {
+          "type": "integer",
+          "default": 100,
+          "description": "Specifies the priority of the highlight selection in the status bar. A higher value means it should be shown more to the left."
+        },
+        "highlight-selection.caseSensitive": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables case sensitivity."
+        },
+        "highlight-selection.wholeWordMatching": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables whole word matching."
+        },
+        "highlight-selection.wordSeparators": {
+          "type": "string",
+          "default": "",
+          "description": "Custom word separators for whole word matching. If not specified, the value of \"editor.wordSeparators\" will be used."
+        }
+      }
+    }
   },
   "scripts": {
     "lint": "eslint .",
