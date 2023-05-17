@@ -35,7 +35,7 @@
         },
         "highlight-selection.backgroundColor": {
           "type": "string",
-          "default": "",
+          "default": "yellow",
           "description": "Set backgroundColor"
         },
         "highlight-selection.alignment": {

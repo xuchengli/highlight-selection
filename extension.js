@@ -1,4 +1,4 @@
-const { window, workspace, StatusBarAlignment } = require('vscode');
+const { window, workspace, StatusBarAlignment, Range } = require('vscode');
 
 function escapeRegExp(str) {
 	return str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
@@ -31,6 +31,22 @@ function getWordSeparatorsValue(config) {
 	return wordSeparators ? wordSeparators : '';
 }
 
+function getBorderWidth(config) {
+	return config.get('borderWidth');
+}
+
+function getBorderRadius(config) {
+	return config.get('borderRadius');
+}
+
+function getBorderColor(config) {
+	return config.get('borderColor');
+}
+
+function getBackgroundColor(config) {
+	return config.get('backgroundColor');
+}
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -42,21 +58,31 @@ function activate(context) {
   const caseSensitive = getCaseSensitiveValue(config);
   const wholeWordMatching = getWholeWordMatchingValue(config);
   const wordSeparators = getWordSeparatorsValue(config);
+	const borderWidth = getBorderWidth(config);
+	const borderRadius = getBorderRadius(config);
+	const borderColor = getBorderColor(config);
+	const backgroundColor = getBackgroundColor(config);
 
 	const msg = window.createStatusBarItem(alignment, priority);
+	const decorationType = window.createTextEditorDecorationType({
+		borderStyle: 'solid',
+		borderWidth,
+		borderRadius,
+		borderColor,
+		backgroundColor,
+		color: 'black',
+	});
 
 	let matchFlags = 'gi';
 	if (caseSensitive) {
 		matchFlags = 'g';
 	}
 
-	const decorationTypes = {};
 	let match;
-	let counter = 0;
 
 	window.onDidChangeTextEditorSelection(() => {
-		counter = 0;
 		const editor = window.activeTextEditor;
+		const ranges = [];
 
 		if (editor) {
 			let text = editor.document.getText(editor.selection);
@@ -72,23 +98,22 @@ function activate(context) {
 				const pattern = new RegExp(text, matchFlags);
 
 				while (match = pattern.exec(editor.document.getText())) {
-					var startPos = editor.document.positionAt(match.index);
-					var endPos = editor.document.positionAt(match.index + match[0].length);
+					const startPos = editor.document.positionAt(match.index);
+					const endPos = editor.document.positionAt(match.index + match[0].length);
 
-					console.log(match[0]);
-					console.log(startPos, endPos);
-
-					counter++;
+					ranges.push({ range: new Range(startPos, endPos) });
 				}
 
-				if (counter) {
-					console.log('highlight count: ', counter);
+				if (ranges.length) {
+					msg.text = '高亮选中: ' + ranges.length;
+					msg.show();
 				} else if (msg) {
 					msg.hide();
 				}
 			} else if (msg) {
 				msg.hide();
 			}
+			editor.setDecorations(decorationType, ranges);
 		} else if (msg) {
 			msg.hide();
 		}
