@@ -3,6 +3,7 @@
   "displayName": "highlight-selection",
   "description": "",
   "version": "0.0.1",
+  "publisher": "lixucheng",
   "repository": {
     "type": "git",
     "url": "https://github.com/xuchengli/highlight-selection"
